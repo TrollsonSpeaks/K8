@@ -15,7 +15,6 @@ metadata:
   uid: 1534916f-3a95-41d2-beb3-a77c2485a67d
 spec:
   progressDeadlineSeconds: 600
-  replicas: 3
   revisionHistoryLimit: 10
   selector:
     matchLabels:
@@ -35,7 +34,24 @@ spec:
       - image: docker.io/bootdotdev/synergychat-web:latest
         imagePullPolicy: Always
         name: synergychat-web
-        resources: {}
+        env:
+          - name: WEB_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: synergychat-web-configmap
+                key: WEB_PORT
+          - name: API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: synergychat-web-configmap
+                key: API_URL
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
